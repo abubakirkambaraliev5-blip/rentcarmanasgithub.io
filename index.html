@@ -1,0 +1,553 @@
+<!doctype html>
+<html lang="ru" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Авто Аренда манас</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=Outfit:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+  <style>
+html,body{margin:0;padding:0;height:100%;font-family:'Outfit',sans-serif}
+*{box-sizing:border-box}
+.font-display{font-family:'Bebas Neue',cursive}
+.car-card{transition:transform .3s,box-shadow .3s}
+.car-card:hover{transform:translateY(-6px);box-shadow:0 20px 40px rgba(0,0,0,.15)}
+.filter-btn.active{background:#f3f4f6;color:#000}
+.cart-badge{animation:pulse-badge 2s infinite}
+@keyframes pulse-badge{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+.slide-in{animation:slideIn .4s ease}
+@keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+.fade-in{animation:fadeIn .6s ease both}
+@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.car-img-wrap{position:relative;overflow:hidden}
+.car-img-wrap::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.3),transparent)}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:#f3f4f6}
+::-webkit-scrollbar-thumb{background:#d1d5db;border-radius:3px}
+.toast{animation:toastIn .4s ease,toastOut .4s ease 2.2s both}
+@keyframes toastIn{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes toastOut{to{transform:translateY(30px);opacity:0}}
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full bg-gradient-to-b from-white via-gray-50 to-gray-100 text-gray-900">
+  <div id="app" class="h-full w-full overflow-auto">
+   <!-- NAV -->
+   <nav class="fixed top-0 left-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+     <div class="flex items-center gap-2">
+      <div class="w-10 h-10  flex items-center justify-center">
+       
+      </div><span id="nav-title" class="font-display text-2xl tracking-wider text-gray-900">АВТО АРЕНДА</span>
+     </div>
+     <div class="flex items-center gap-5">
+      <div class="flex items-center gap-6 text-sm text-gray-600">
+       <a href="#catalog" class="hover:text-gray-900 transition">Каталог</a> <a href="#requirements" class="hover:text-gray-900 transition">Требования</a> <a href="#delivery" class="hover:text-gray-900 transition">Доставка</a> <a href="#contacts" class="hover:text-gray-900 transition">Контакты</a>
+      </div><button id="cart-btn" onclick="toggleCart()" class="relative p-2 hover:bg-gray-200 rounded-lg transition text-gray-900"> <i data-lucide="shopping-cart" class="w-5 h-5"></i> <span id="cart-count" class="hidden absolute -top-1 -right-1 w-5 h-5 bg-gray-900 text-white text-xs font-bold rounded-full flex items-center justify-center cart-badge">0</span> </button>
+     </div>
+    </div>
+   </nav><!-- HERO -->
+   <header class="relative w-full pt-32 pb-20 px-4" style="background:url('Yellow\ Lamborghini\ Miura.jfif') center/cover no-repeat;">
+    <div class="max-w-7xl mx-auto text-center">
+     <h1 id="hero-title" class="font-display text-6xl md:text-8xl tracking-wider mb-4 text-white-900" style="animation:fadeIn .8s ease both">АВТО АРЕНДА</h1>
+     <p id="hero-sub" class="text-gray-600 text-lg md:text-xl mb-10 font-light" style="animation:fadeIn .8s ease .2s both">Надежная аренда автомобилей в Бишкеке</p>
+     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto mb-8" style="animation:fadeIn .8s ease .4s both">
+      <div class="bg-white/5 border border-gray-300 rounded-xl p-4">
+       <label class="text-xs text-white-600 block mb-2 font-semibold">Откуда забрать</label> <select id="pickup-location" class="w-full bg-transparent text-white-900 text-sm outline-none border-b border-gray-400 pb-2"> <option value="">Выбрать локацию</option> <option value="Аэропорт">Аэропорт</option> <option value="Центр города (ТЦ. Чолпон)">Центр города (ТЦ. Чолпон)</option> <option value="Ж/д вокзал">Ж/д вокзал</option> <option value="Автовокзал">Автовокзал</option> <option value="ТЦ Мариям">ТЦ Мариям</option> <option value="ГУМ Манас">ГУМ Манас</option> <option value="Парк Дружбы">Парк Дружбы</option> <option value="Офис в центре (ул. Ю.Абдрахманова)">Офис в центре (ул. Ю.Абдрахманова)</option> <option value="Микрорайон Спутник">Микрорайон Спутник</option> <option value="Рынок Байэл">Рынок Байэл</option> </select>
+      </div>
+      <div class="bg-white/5 border border-gray-300 rounded-xl p-4">
+       <label class="text-xs text-white-600 block mb-2 font-semibold">Куда доставить</label> <select id="delivery-location" class="w-full bg-transparent text-white-900 text-sm outline-none border-b border-gray-400 pb-2"> <option value="">Выбрать локацию</option> <option value="Аэропорт">Аэропорт</option> <option value="Центр города (ТЦ. Чолпон)">Центр города (ТЦ. Чолпон)</option> <option value="Ж/д вокзал">Ж/д вокзал</option> <option value="Автовокзал">Автовокзал</option> <option value="ТЦ Мариям">ТЦ Мариям</option> <option value="ГУМ Манас">ГУМ Манас</option> <option value="Парк Дружбы">Парк Дружбы</option> <option value="Офис в центре (ул. Ю.Абдрахманова)">Офис в центре (ул. Ю.Абдрахманова)</option> <option value="Микрорайон Спутник">Микрорайон Спутник</option> <option value="Рынок Байэл">Рынок Байэл</option> </select>
+      </div>
+      <div class="bg-white/5 border border-gray-300 rounded-xl p-4">
+       <label class="text-xs text-white-600 block mb-2 font-semibold">Сдать авто</label> <select id="return-location" class="w-full bg-transparent text-white-900 text-sm outline-none border-b border-gray-400 pb-2"> <option value="">Выбрать локацию</option> <option value="Аэропорт">Аэропорт</option> <option value="Центр города (ТЦ. Чолпон)">Центр города (ТЦ. Чолпон)</option> <option value="Ж/д вокзал">Ж/д вокзал</option> <option value="Автовокзал">Автовокзал</option> <option value="ТЦ Мариям">ТЦ Мариям</option> <option value="ГУМ Манас">ГУМ Манас</option> <option value="Парк Дружбы">Парк Дружбы</option> <option value="Офис в центре (ул. Ю.Абдрахманова)">Офис в центре (ул. Ю.Абдрахманова)</option> <option value="Микрорайон Спутник">Микрорайон Спутник</option> <option value="Рынок Байэл">Рынок Байэл</option> </select>
+      </div>
+     </div>
+     <div class="flex flex-wrap justify-center gap-4 max-w-3xl mx-auto" style="animation:fadeIn .8s ease .4s both">
+      <div class="flex-1 min-w-[200px] bg-white/5 border border-gray-300 rounded-xl p-3">
+       <label class="text-xs text-white-600 block mb-1">Дата начала</label> <input type="date" id="date-start" class="w-full bg-transparent text-white-900 text-sm outline-none" onchange="updateDates()">
+      </div>
+      <div class="flex-1 min-w-[200px] bg-white/5 border border-gray-300 rounded-xl p-3">
+       <label class="text-xs text-gray-600 block mb-1">Дата окончания</label> <input type="date" id="date-end" class="w-full bg-transparent text-gray-900 text-sm outline-none" onchange="updateDates()">
+      </div><button onclick="scrollToCatalog()" class="px-8 py-3 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 transition flex items-center gap-2"> <i data-lucide="search" class="w-4 h-4"></i> Найти авто </button>
+     </div>
+    </div>
+   </header><!-- CATALOG -->
+   <section id="catalog" class="max-w-7xl mx-auto px-4 py-16">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+     <div>
+      <h2 class="font-display text-4xl tracking-wider text-gray-900">КАТАЛОГ</h2>
+      <p class="text-gray-600 text-sm mt-1">Выберите автомобиль для аренды</p>
+     </div>
+     <div id="rental-period" class="text-sm text-gray-600"></div>
+    </div><!-- FILTERS -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+     <div>
+      <label class="text-xs text-gray-600 block mb-2 font-semibold">Марка</label> <select id="brand-filter" onchange="applyFilters()" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 outline-none"> <option value="">Все марки</option> <option value="Lexus">Lexus</option> <option value="Chevrolet">Chevrolet</option> <option value="Honda">Honda</option> <option value="Toyota">Toyota</option> <option value="Hyundai">Hyundai</option> </select>
+     </div>
+     <div>
+      <label class="text-xs text-gray-600 block mb-2 font-semibold">Класс</label> <select id="class-filter" onchange="applyFilters()" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 outline-none"> <option value="">Все классы</option> <option value="economy">Эконом</option> <option value="comfort">Комфорт</option> </select>
+     </div>
+     <div>
+      <label class="text-xs text-gray-600 block mb-2 font-semibold">Цена (сом)</label> <input type="number" id="price-filter" placeholder="Макс. цена" onchange="applyFilters()" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 outline-none">
+     </div>
+     <div>
+      <label class="text-xs text-gray-600 block mb-2 font-semibold">Сортировка</label> <select id="sort-select" onchange="applyFilters()" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 outline-none"> <option value="default">По умолчанию</option> <option value="price-asc">Цена ↑</option> <option value="price-desc">Цена ↓</option> </select>
+     </div>
+    </div><!-- CARS GRID -->
+    <div id="cars-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+   </section><!-- REQUIREMENTS -->
+   <section id="requirements" class="w-full py-20 px-4 bg-gradient-to-b from-gray-50 to-white">
+    <div class="max-w-7xl mx-auto">
+     <h2 class="font-display text-4xl tracking-wider text-center text-gray-900 mb-12">ТРЕБОВАНИЯ К КЛИЕНТАМ</h2>
+     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div class="bg-white border border-gray-200 rounded-2xl p-6">
+       <div class="w-12 h-12 bg-gray-900 rounded-xl flex items-center justify-center mb-4">
+        <i data-lucide="id-card" class="w-6 h-6 text-white"></i>
+       </div>
+       <h3 class="font-semibold text-lg text-gray-900 mb-2">Паспорт или ID</h3>
+       <p class="text-gray-600 text-sm">Действительный паспорт или национальное удостоверение личности</p>
+      </div>
+      <div class="bg-white border border-gray-200 rounded-2xl p-6">
+       <div class="w-12 h-12 bg-gray-900 rounded-xl flex items-center justify-center mb-4">
+        <i data-lucide="license" class="w-6 h-6 text-white"></i>
+       </div>
+       <h3 class="font-semibold text-lg text-gray-900 mb-2">Водительские права</h3>
+       <p class="text-gray-600 text-sm">Водительское удостоверение, действительное минимум 1 год</p>
+      </div>
+      <div class="bg-white border border-gray-200 rounded-2xl p-6">
+       <div class="w-12 h-12 bg-gray-900 rounded-xl flex items-center justify-center mb-4">
+        <i data-lucide="credit-card" class="w-6 h-6 text-white"></i>
+       </div>
+       <h3 class="font-semibold text-lg text-gray-900 mb-2">Залог</h3>
+       <p class="text-gray-600 text-sm">Залог в размере 20,000 - 50,000 сом в зависимости от авто</p>
+      </div>
+      <div class="bg-white border border-gray-200 rounded-2xl p-6">
+       <div class="w-12 h-12 bg-gray-900 rounded-xl flex items-center justify-center mb-4">
+        <i data-lucide="phone" class="w-6 h-6 text-white"></i>
+       </div>
+       <h3 class="font-semibold text-lg text-gray-900 mb-2">Контактные данные</h3>
+       <p class="text-gray-600 text-sm">Действительный номер телефона и адрес проживания в Бишкеке</p>
+      </div>
+      <div class="bg-white border border-gray-200 rounded-2xl p-6">
+       <div class="w-12 h-12 bg-gray-900 rounded-xl flex items-center justify-center mb-4">
+        <i data-lucide="calendar" class="w-6 h-6 text-white"></i>
+       </div>
+       <h3 class="font-semibold text-lg text-gray-900 mb-2">Минимальный срок</h3>
+       <p class="text-gray-600 text-sm">Аренда на минимум 1 день, максимум 90 дней подряд</p>
+      </div>
+      <div class="bg-white border border-gray-200 rounded-2xl p-6">
+       <div class="w-12 h-12 bg-gray-900 rounded-xl flex items-center justify-center mb-4">
+        <i data-lucide="alert-circle" class="w-6 h-6 text-white"></i>
+       </div>
+       <h3 class="font-semibold text-lg text-gray-900 mb-2">Возраст</h3>
+       <p class="text-gray-600 text-sm">Минимальный возраст 21 год. Дополнительный сбор до 25 лет</p>
+      </div>
+     </div>
+    </div>
+   </section><!-- DELIVERY -->
+   <section id="delivery" class="max-w-7xl mx-auto px-4 py-16">
+    <div class="text-center mb-12">
+     <h2 class="font-display text-4xl tracking-wider text-gray-900">СИСТЕМА ДОСТАВКИ</h2>
+     <p class="text-gray-600 text-sm mt-2">Выберите удобный способ</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+     <div class="bg-white border border-gray-200 rounded-2xl p-6 text-center hover:shadow-lg transition">
+      <div class="w-16 h-16 mx-auto mb-4 bg-gray-900 rounded-2xl flex items-center justify-center">
+       <i data-lucide="map-pin" class="w-8 h-8 text-white"></i>
+      </div>
+      <h3 class="font-semibold text-lg text-gray-900 mb-2">Забрать сам</h3>
+      <p class="text-gray-600 text-sm">Приезжайте в офис и заберите машину. Никаких дополнительных сборов.</p>
+     </div>
+     <div class="bg-white border border-gray-200 rounded-2xl p-6 text-center hover:shadow-lg transition">
+      <div class="w-16 h-16 mx-auto mb-4 bg-gray-900 rounded-2xl flex items-center justify-center">
+       <i data-lucide="car" class="w-8 h-8 text-white"></i>
+      </div>
+      <h3 class="font-semibold text-lg text-gray-900 mb-2">Доставка авто</h3>
+      <p class="text-gray-600 text-sm">Привезем автомобиль в любую точку Бишкека. +500 сом за доставку.</p>
+     </div>
+     <div class="bg-white border border-gray-200 rounded-2xl p-6 text-center hover:shadow-lg transition">
+      <div class="w-16 h-16 mx-auto mb-4 bg-gray-900 rounded-2xl flex items-center justify-center">
+       <i data-lucide="truck" class="w-8 h-8 text-white"></i>
+      </div>
+      <h3 class="font-semibold text-lg text-gray-900 mb-2">Комбо пакет</h3>
+      <p class="text-gray-600 text-sm">Доставка и возврат машины. +900 сом за оба направления.</p>
+     </div>
+    </div>
+   </section><!-- CONTACTS / FOOTER -->
+   <footer id="contacts" class="w-full py-16 px-4 border-t border-gray-200 bg-white">
+    <div class="max-w-7xl mx-auto">
+     <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-12">
+      <div>
+       <span class="font-display text-2xl tracking-wider text-gray-900">АВТО АРЕНДА</span>
+       <p class="text-gray-600 text-sm mt-3">Надежная аренда автомобилей с доставкой по всему городу Манас.</p>
+      </div>
+      <div>
+       <h4 class="font-semibold text-gray-900 mb-3">Контакты</h4>
+       <div class="space-y-2 text-sm text-gray-600">
+        <div class="flex items-center gap-2">
+         <i data-lucide="phone" class="w-4 h-4"></i>+996 228 966 966
+        </div>
+        <div class="flex items-center gap-2">
+         <i data-lucide="mail" class="w-4 h-4"></i>info@rentcarmanas.kg
+        </div>
+        <div class="flex items-center gap-2">
+         <i data-lucide="map-pin" class="w-4 h-4"></i>Манас, ул. Ю.Абдрахманова, 35А
+        </div>
+       </div>
+      </div>
+      <div>
+       <h4 class="font-semibold text-gray-900 mb-3">Соц. сети</h4>
+       <div class="flex gap-3">
+        <a href="https://instagram.com/rentcar_manas" class="w-10 h-10 bg-gray-100 border border-gray-200 rounded-xl flex items-center justify-center hover:bg-gray-900 hover:text-white transition"> <i data-lucide="instagram" class="w-5 h-5"></i> </a> <a href="#" class="w-10 h-10 bg-gray-100 border border-gray-200 rounded-xl flex items-center justify-center hover:bg-gray-900 hover:text-white transition"> <i data-lucide="facebook" class="w-5 h-5"></i> </a> <a href="#" class="w-10 h-10 bg-gray-100 border border-gray-200 rounded-xl flex items-center justify-center hover:bg-gray-900 hover:text-white transition"> <i data-lucide="twitter" class="w-5 h-5"></i> </a> <a href="https://youtube.com/artur_autoobzor" class="w-10 h-10 bg-gray-100 border border-gray-200 rounded-xl flex items-center justify-center hover:bg-gray-900 hover:text-white transition"> <i data-lucide="youtube" class="w-5 h-5"></i> </a>
+       </div>
+      </div>
+     </div>
+     <div class="text-center text-xs text-gray-500 pt-6 border-t border-gray-200">
+      © 2026 Авто Аренда Манас. Все права защищены.
+     </div>
+    </div>
+   </footer><!-- CART SIDEBAR -->
+   <div id="cart-overlay" class="fixed inset-0 bg-black/60 z-50 hidden" onclick="toggleCart()"></div>
+   <div id="cart-panel" class="fixed top-0 right-0 h-full w-full max-w-md bg-white border-l border-gray-200 z-50 translate-x-full transition-transform duration-300 flex flex-col">
+    <div class="flex items-center justify-between p-5 border-b border-gray-200">
+     <h3 class="font-display text-2xl tracking-wider text-gray-900">КОРЗИНА</h3><button onclick="toggleCart()" class="p-2 hover:bg-gray-100 rounded-lg transition"> <i data-lucide="x" class="w-5 h-5 text-gray-900"></i> </button>
+    </div>
+    <div id="cart-items" class="flex-1 overflow-auto p-5 space-y-4"></div>
+    <div id="cart-footer" class="p-5 border-t border-gray-200 hidden">
+     <div class="flex justify-between mb-4">
+      <span class="text-gray-600">Итого:</span> <span id="cart-total" class="font-display text-2xl text-gray-900"></span>
+     </div><button onclick="checkout()" class="w-full py-3 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 transition">Оформить заказ</button>
+    </div>
+   </div><!-- CAR DETAILS MODAL -->
+   <div id="car-modal" class="fixed inset-0 bg-black/60 z-50 hidden overflow-auto">
+    <div class="min-h-full flex items-center justify-center p-4">
+     <div class="bg-white rounded-3xl max-w-2xl w-full shadow-2xl">
+      <div class="relative h-80 bg-gradient-to-br from-gray-200 to-gray-300 overflow-hidden">
+       <div id="modal-car-image" class="w-full h-full"></div><button onclick="closeCarModal()" class="absolute top-4 right-4 w-10 h-10 bg-white rounded-full flex items-center justify-center hover:bg-gray-100 shadow-lg"> <i data-lucide="x" class="w-5 h-5 text-gray-900"></i> </button>
+      </div>
+      <div class="p-8">
+       <div class="flex justify-between items-start mb-4">
+        <div>
+         <h2 id="modal-car-name" class="font-display text-3xl text-gray-900 mb-1"></h2>
+         <p id="modal-car-year" class="text-gray-600 text-sm"></p>
+        </div>
+        <div class="text-right">
+         <p class="text-xs text-gray-600 mb-1">Цена за день</p>
+         <p id="modal-price" class="font-display text-3xl text-gray-900"></p>
+        </div>
+       </div>
+       <div id="modal-car-specs" class="mb-8 pb-8 border-b border-gray-200"></div>
+       <div class="mb-8">
+        <h3 class="font-semibold text-lg text-gray-900 mb-4">Контакты владельца</h3>
+        <div class="bg-gray-50 rounded-2xl p-6 space-y-3">
+         <div>
+          <p class="text-xs text-gray-500 mb-1">Имя</p>
+          <p id="modal-owner-name" class="font-semibold text-gray-900"></p>
+         </div>
+         <div class="flex items-center gap-4">
+          <a id="modal-owner-phone" href="#" class="flex-1 flex items-center gap-2 text-sm font-semibold text-gray-900 hover:text-blue-600 transition"> <i data-lucide="phone" class="w-4 h-4"></i> <span id="modal-owner-phone-text"></span> </a> <a id="modal-owner-whatsapp" href="#" target="_blank" class="flex-1 flex items-center gap-2 text-sm font-semibold text-gray-900 hover:text-green-600 transition"> <i data-lucide="message-circle" class="w-4 h-4"></i>WhatsApp </a>
+         </div>
+         <div>
+          <p class="text-xs text-gray-500 mb-1">Email</p><a id="modal-owner-email" href="#" class="text-sm font-semibold text-blue-600 hover:text-blue-700 transition"></a>
+         </div>
+        </div>
+       </div>
+       <div class="flex gap-3">
+        <button onclick="addToCart(selectedCarForModal.id)" class="flex-1 py-3 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 transition flex items-center justify-center gap-2"> <i data-lucide="plus" class="w-5 h-5"></i> В корзину </button> <button onclick="closeCarModal()" class="px-6 py-3 border border-gray-300 text-gray-900 font-semibold rounded-xl hover:bg-gray-50 transition"> Закрыть </button>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div><!-- TOAST -->
+   <div id="toast-container" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2"></div>
+  </div>
+  <script>
+const cars = [
+  { id:1, name:'Toyota Camry 70', brand:'Toyota', class:'comfort', price:10000, year:2023, hp:'203 л.с.', fuel:'Бензин', seats:5, img:'T1', owner_id:1 },
+  { id:2, name:'Honda fit', brand:'Honda', class:'economy', price:4500, year:2024, hp:'106 л.с.', fuel:'Бензин', seats:5, img:'H1', owner_id:1 },
+  { id:3, name:'Honda accord', brand:'Honda', class:'comfort', price:5000, year:2024, hp:'255 л.с.', fuel:'Бензин', seats:5, img:'M1', owner_id:2 },
+  { id:4, name:'Tayota Camry 30', brand:'Tayota', class:'comfort', price:5000, year:2023, hp:'184 л.с.', fuel:'Дизель', seats:5, img:'B1', owner_id:2 },
+  { id:5, name:'Chevrolet Spark ', brand:'Chevrolet', class:'comfort', price:5000, year:2024, hp:'190 л.с.', fuel:'Бензин', seats:5, img:'A1', owner_id:3 },
+  { id:6, name:'Hyundai Sonata', brand:'Hyundai', class:'economy', price:5000, year:2018, hp:'131 л.с.', fuel:'Бензин', seats:5, img:'T2', owner_id:3 },
+  { id:7, name:'Hyundai Santa Fe', brand:'Hyundai', class:'economy', price:9000, year:2019, hp:'150 л.с.', fuel:'Бензин', seats:5, img:'H2', owner_id:1 },
+  { id:8, name:'Tayota Windom', brand:'Tayota', class:'comfort', price:7000, year:2024, hp:'258 л.с.', fuel:'Бензин', seats:5, img:'M2', owner_id:2 },
+  { id:9, name:'Tayota Harrier', brand:'Tayota', class:'comfort', price:7000, year:2023, hp:'230 л.с.', fuel:'Дизель', seats:5, img:'B2', owner_id:1 },
+   { id:10, name:'Lexus GX470 ', brand:'Lexus', class:'comfort', price:10000, year:2023, hp:'230 л.с.', fuel:'Дизель', seats:5, img:'B3', owner_id:1 },
+ { id:11, name:'Lexus LX570', brand:'Lexus', class:'comfort', price:20000, year:2023, hp:'230 л.с.', fuel:'Дизель', seats:5, img:'B4', owner_id:1 },
+ { id:12, name:'Lexus ES300', brand:'Lexus', class:'comfort', price:20000, year:2018, hp:'230 л.с.', fuel:'Дизель', seats:5, img:'B5', owner_id:1 },
+
+];
+
+const owners = [
+  { id:1, name:'Асанов Шералы', phone:'+996 779941597', whatsapp:'+996 779941597', email:'asanov777@gmail.com' },
+  { id:2, name:'Балтабаев Искендер', phone:'+996 550856785', whatsapp:'+996 550 856 785', email:'baltabaev@gmail.com' },
+  { id:3, name:'Торогулов Байэл', phone:'+996 771 835 050', whatsapp:'+996 835 050', email:'torogulovb@gmail.com' },
+];
+
+let cart = [];
+let currentFilter = 'all';
+let rentalDays = 1;
+let selectedCarForModal = null;
+
+function renderCarImage(car) {
+  const images = {
+    T1: 'tayota.jfif?w=500&h=300&fit=crop',
+    H1: 'hondafit.jfif?w=500&h=300&fit=crop',
+    M1: 'accord.jfif?w=500&h=300&fit=crop',
+    B1: 'camry30.jfif?w=500&h=300&fit=crop',
+    A1: 'ch.jfif?w=500&h=300&fit=crop',
+    T2: 'sonata.jfif?w=500&h=300&fit=crop',
+    H2: 'santafe.jfif?w=500&h=300&fit=crop',
+    M2: 'win.jfif?w=500&h=300&fit=crop',
+    B2: 'HARRIER.jfif?w=500&h=300&fit=crop',
+    B3: 'Lexus.jfif?w=500&h=300&fit=crop',
+    B4: 'LX570.jfif?w=500&h=300&fit=crop',
+    B5: 'es300.jfif?w=500&h=300&fit=crop',
+
+  };
+  return `<img src="${images[car.img]}" alt="${car.name}" class="w-full h-full object-cover" loading="lazy" onerror="this.style.background='linear-gradient(135deg,#e5e7eb,#d1d5db)';this.style.display='none'">`;
+}
+
+function renderCars() {
+  const grid = document.getElementById('cars-grid');
+  const brand = document.getElementById('brand-filter').value;
+  const carClass = document.getElementById('class-filter').value;
+  const maxPrice = parseFloat(document.getElementById('price-filter').value) || Infinity;
+  const sort = document.getElementById('sort-select').value;
+  
+  let filtered = cars.filter(c => {
+    const brandMatch = !brand || c.brand === brand;
+    const classMatch = !carClass || c.class === carClass;
+    const priceMatch = c.price <= maxPrice;
+    return brandMatch && classMatch && priceMatch;
+  });
+
+  if (sort === 'price-asc') filtered.sort((a,b) => a.price - b.price);
+  else if (sort === 'price-desc') filtered.sort((a,b) => b.price - a.price);
+
+  grid.innerHTML = filtered.map((car, i) => `
+    <div class="car-card bg-white border border-gray-200 rounded-2xl overflow-hidden fade-in cursor-pointer hover:shadow-xl transition" style="animation-delay:${i*0.1}s" onclick="openCarModal(${car.id})">
+      <div class="car-img-wrap h-48 bg-gradient-to-br from-gray-200 to-gray-300">${renderCarImage(car)}</div>
+      <div class="p-5">
+        <div class="flex justify-between items-start mb-3">
+          <div><h3 class="font-semibold text-lg text-gray-900">${car.name}</h3><span class="text-xs text-gray-600">${car.year}</span></div>
+          <span class="text-xs px-2 py-1 bg-gray-100 rounded-full text-gray-700 font-semibold">${car.class === 'economy' ? 'Эконом' : 'Комфорт'}</span>
+        </div>
+        <div class="grid grid-cols-3 gap-2 mb-4 text-xs text-gray-600">
+          <div class="flex items-center gap-1"><i data-lucide="gauge" class="w-3 h-3"></i>${car.hp}</div>
+          <div class="flex items-center gap-1"><i data-lucide="fuel" class="w-3 h-3"></i>${car.fuel}</div>
+          <div class="flex items-center gap-1"><i data-lucide="users" class="w-3 h-3"></i>${car.seats} мест</div>
+        </div>
+        <div class="flex items-center justify-between">
+          <div><span class="text-xl font-bold text-gray-900">${car.price.toLocaleString('ru')} с</span><span class="text-xs text-gray-600"> / сутки</span></div>
+          <button onclick="addToCart(${car.id}, event)" class="px-4 py-2 bg-gray-900 text-white text-sm font-semibold rounded-xl hover:bg-gray-800 transition flex items-center gap-1">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+  lucide.createIcons();
+}
+
+function applyFilters() { renderCars(); }
+
+function openCarModal(carId) {
+  selectedCarForModal = cars.find(c => c.id === carId);
+  if (!selectedCarForModal) return;
+  const modal = document.getElementById('car-modal');
+  const owner = owners.find(o => o.id === selectedCarForModal.owner_id);
+  
+  document.getElementById('modal-car-image').innerHTML = renderCarImage(selectedCarForModal);
+  document.getElementById('modal-car-name').textContent = selectedCarForModal.name;
+  document.getElementById('modal-car-year').textContent = selectedCarForModal.year;
+  document.getElementById('modal-car-specs').innerHTML = `
+    <div class="grid grid-cols-2 gap-4 text-sm">
+      <div><span class="text-gray-600">Мощность:</span><br><span class="font-semibold text-gray-900">${selectedCarForModal.hp}</span></div>
+      <div><span class="text-gray-600">Топливо:</span><br><span class="font-semibold text-gray-900">${selectedCarForModal.fuel}</span></div>
+      <div><span class="text-gray-600">Места:</span><br><span class="font-semibold text-gray-900">${selectedCarForModal.seats}</span></div>
+      <div><span class="text-gray-600">Класс:</span><br><span class="font-semibold text-gray-900">${selectedCarForModal.class === 'economy' ? 'Эконом' : 'Комфорт'}</span></div>
+    </div>
+  `;
+  document.getElementById('modal-owner-name').textContent = owner.name;
+  document.getElementById('modal-owner-phone').href = `tel:${owner.phone}`;
+  document.getElementById('modal-owner-phone-text').textContent = owner.phone;
+  document.getElementById('modal-owner-whatsapp').href = `https://wa.me/${owner.whatsapp.replace(/\D/g, '')}`;
+  document.getElementById('modal-owner-email').textContent = owner.email;
+  document.getElementById('modal-owner-email').href = `mailto:${owner.email}`;
+  document.getElementById('modal-price').textContent = selectedCarForModal.price.toLocaleString('ru') + ' с';
+  
+  modal.classList.remove('hidden');
+  lucide.createIcons();
+}
+
+function closeCarModal() {
+  document.getElementById('car-modal').classList.add('hidden');
+  selectedCarForModal = null;
+}
+
+function addToCart(id, event) {
+  if (event) event.stopPropagation();
+  const car = cars.find(c => c.id === id);
+  const existing = cart.find(c => c.id === id);
+  if (existing) { existing.days += rentalDays; }
+  else { cart.push({ ...car, days: rentalDays }); }
+  updateCart();
+  showToast(`${car.name} добавлен в корзину`);
+}
+
+function removeFromCart(id) {
+  cart = cart.filter(c => c.id !== id);
+  updateCart();
+}
+
+function updateCart() {
+  const countEl = document.getElementById('cart-count');
+  const itemsEl = document.getElementById('cart-items');
+  const footerEl = document.getElementById('cart-footer');
+  const totalEl = document.getElementById('cart-total');
+
+  if (cart.length === 0) {
+    countEl.classList.add('hidden');
+    footerEl.classList.add('hidden');
+    itemsEl.innerHTML = '<div class="flex flex-col items-center justify-center h-full text-gray-500"><i data-lucide="shopping-cart" class="w-12 h-12 mb-3 opacity-30"></i><p>Корзина пуста</p></div>';
+    lucide.createIcons();
+    return;
+  }
+
+  countEl.classList.remove('hidden');
+  countEl.textContent = cart.length;
+  footerEl.classList.remove('hidden');
+
+  let total = 0;
+  itemsEl.innerHTML = cart.map(item => {
+    const cost = item.price * item.days;
+    total += cost;
+    return `<div class="slide-in bg-gray-50 border border-gray-200 rounded-xl p-4 flex gap-4">
+      <div class="w-20 h-14 rounded-lg overflow-hidden flex-shrink-0 bg-gray-200">${renderCarImage(item)}</div>
+      <div class="flex-1 min-w-0">
+        <div class="flex justify-between items-start"><h4 class="font-semibold text-sm text-gray-900 truncate">${item.name}</h4>
+          <button onclick="removeFromCart(${item.id})" class="p-1 hover:bg-gray-300 rounded-lg transition flex-shrink-0"><i data-lucide="x" class="w-4 h-4 text-gray-600"></i></button>
+        </div>
+        <div class="flex items-center gap-2 mt-1">
+          <button onclick="changeDays(${item.id},-1)" class="w-6 h-6 bg-gray-200 rounded flex items-center justify-center text-xs hover:bg-gray-300 text-gray-900">−</button>
+          <span class="text-sm text-gray-900">${item.days} сут.</span>
+          <button onclick="changeDays(${item.id},1)" class="w-6 h-6 bg-gray-200 rounded flex items-center justify-center text-xs hover:bg-gray-300 text-gray-900">+</button>
+        </div>
+        <p class="text-sm font-semibold text-gray-900 mt-1">${cost.toLocaleString('ru')} с</p>
+      </div>
+    </div>`;
+  }).join('');
+  totalEl.textContent = total.toLocaleString('ru') + ' с';
+  lucide.createIcons();
+}
+
+function changeDays(id, delta) {
+  const item = cart.find(c => c.id === id);
+  if (item) { item.days = Math.max(1, item.days + delta); updateCart(); }
+}
+
+function toggleCart() {
+  const panel = document.getElementById('cart-panel');
+  const overlay = document.getElementById('cart-overlay');
+  const open = panel.classList.contains('translate-x-full');
+  panel.classList.toggle('translate-x-full', !open);
+  overlay.classList.toggle('hidden', !open);
+}
+
+function checkout() {
+  const total = cart.reduce((s,i)=>s+i.price*i.days,0);
+  cart = [];
+  updateCart();
+  toggleCart();
+  showToast(`Заказ оформлен на ${total.toLocaleString('ru')} с`);
+}
+
+function showToast(msg) {
+  const c = document.getElementById('toast-container');
+  const t = document.createElement('div');
+  t.className = 'toast px-5 py-3 bg-gray-900 text-white rounded-xl text-sm font-semibold shadow-2xl';
+  t.textContent = msg;
+  c.appendChild(t);
+  setTimeout(() => t.remove(), 2600);
+}
+
+function updateDates() {
+  const s = document.getElementById('date-start').value;
+  const e = document.getElementById('date-end').value;
+  const info = document.getElementById('rental-period');
+  if (s && e) {
+    const diff = Math.max(1, Math.ceil((new Date(e) - new Date(s)) / 86400000));
+    rentalDays = diff;
+    info.innerHTML = `<i data-lucide="calendar" class="w-4 h-4 inline"></i> ${diff} сут. аренды`;
+    lucide.createIcons();
+  }
+}
+
+function scrollToCatalog() { document.getElementById('catalog').scrollIntoView({ behavior:'smooth' }); }
+
+// Set default dates
+const today = new Date();
+const next = new Date(today); next.setDate(next.getDate()+3);
+document.getElementById('date-start').value = today.toISOString().split('T')[0];
+document.getElementById('date-end').value = next.toISOString().split('T')[0];
+rentalDays = 3;
+
+// Element SDK
+const defaultConfig = {
+  site_title: 'АВТО АРЕНДА',
+  hero_subtitle: 'Надежная аренда автомобилей в Бишкеке',
+  owner_name: 'Иван Иванов',
+  owner_phone: '+996 312 123-45-67',
+  owner_whatsapp: '+996 312 123-45-67',
+  text_color: '#111827',
+  primary_action_color: '#111827',
+  font_family: 'Outfit',
+  font_size: 16
+};
+
+window.elementSdk.init({
+  defaultConfig,
+  onConfigChange: async (config) => {
+    const text = config.text_color || defaultConfig.text_color;
+    const primary = config.primary_action_color || defaultConfig.primary_action_color;
+    const font = config.font_family || defaultConfig.font_family;
+    const size = config.font_size || defaultConfig.font_size;
+
+    document.body.style.color = text;
+    document.body.style.fontFamily = `${font}, Outfit, sans-serif`;
+    document.body.style.fontSize = size + 'px';
+
+    document.getElementById('nav-title').textContent = config.site_title || defaultConfig.site_title;
+    document.getElementById('hero-title').textContent = config.site_title || defaultConfig.site_title;
+    document.getElementById('hero-sub').textContent = config.hero_subtitle || defaultConfig.hero_subtitle;
+
+    document.querySelectorAll('button.bg-gray-900').forEach(b => { b.style.backgroundColor = primary; });
+  },
+  mapToCapabilities: (config) => ({
+    recolorables: [
+      { get:()=>config.text_color||defaultConfig.text_color, set:(v)=>{config.text_color=v;window.elementSdk.setConfig({text_color:v})} },
+      { get:()=>config.primary_action_color||defaultConfig.primary_action_color, set:(v)=>{config.primary_action_color=v;window.elementSdk.setConfig({primary_action_color:v})} },
+    ],
+    borderables: [],
+    fontEditable: { get:()=>config.font_family||defaultConfig.font_family, set:(v)=>{config.font_family=v;window.elementSdk.setConfig({font_family:v})} },
+    fontSizeable: { get:()=>config.font_size||defaultConfig.font_size, set:(v)=>{config.font_size=v;window.elementSdk.setConfig({font_size:v})} },
+  }),
+  mapToEditPanelValues: (config) => new Map([
+    ['site_title', config.site_title || defaultConfig.site_title],
+    ['hero_subtitle', config.hero_subtitle || defaultConfig.hero_subtitle],
+    ['owner_name', config.owner_name || defaultConfig.owner_name],
+    ['owner_phone', config.owner_phone || defaultConfig.owner_phone],
+    ['owner_whatsapp', config.owner_whatsapp || defaultConfig.owner_whatsapp],
+  ])
+});
+
+renderCars();
+updateCart();
+lucide.createIcons();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9ec7ee6444ab3232',t:'MTc3NjIyNDQ1MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
